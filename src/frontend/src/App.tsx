@@ -4,7 +4,6 @@ import {
   CheckCircle,
   DollarSign,
   Handshake,
-  Image,
   Menu,
   Mic2,
   Search,
@@ -16,6 +15,8 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
+
+const BOOKING_URL = "https://cal.com/darpan-olymp-cal/15min";
 
 const NAV_LINKS = [
   { label: "Home", href: "#home" },
@@ -33,7 +34,7 @@ const PROBLEMS = [
   {
     icon: AlertCircle,
     title: "Brands Aren't Reaching Out Consistently",
-    desc: "Waiting for brands to find you is a losing game. Sporadic outreach means inconsistent income — a feast-or-famine cycle that's hard to plan around.",
+    desc: "Waiting for brands to find you is a losing game. Sporadic outreach means inconsistent income -- a feast-or-famine cycle that's hard to plan around.",
   },
   {
     icon: DollarSign,
@@ -96,7 +97,7 @@ const STEPS = [
     step: "03",
     icon: Handshake,
     title: "We Close Deals for You",
-    desc: "We negotiate rates, terms, and deliverables — you only review and approve.",
+    desc: "We negotiate rates, terms, and deliverables -- you only review and approve.",
   },
   {
     step: "04",
@@ -109,15 +110,22 @@ const STEPS = [
 function BlueButton({
   children,
   className = "",
+  href,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
   children: React.ReactNode;
+  href?: string;
 }) {
+  const cls = `inline-flex items-center justify-center px-6 py-3 rounded-full bg-gold text-white font-semibold text-sm uppercase tracking-widest transition-all duration-200 hover:bg-gold-hover hover:shadow-gold active:scale-95 ${className}`;
+  if (href) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={cls}>
+        {children}
+      </a>
+    );
+  }
   return (
-    <button
-      className={`inline-flex items-center justify-center px-6 py-3 rounded-full bg-gold text-white font-semibold text-sm uppercase tracking-widest transition-all duration-200 hover:bg-gold-hover hover:shadow-gold active:scale-95 ${className}`}
-      {...props}
-    >
+    <button className={cls} {...props}>
       {children}
     </button>
   );
@@ -202,7 +210,7 @@ export default function App() {
 
           {/* CTA */}
           <div className="hidden md:flex items-center">
-            <BlueButton data-ocid="nav.primary_button">
+            <BlueButton href={BOOKING_URL} data-ocid="nav.primary_button">
               Book a Free Call
             </BlueButton>
           </div>
@@ -237,7 +245,11 @@ export default function App() {
                 {link.label}
               </a>
             ))}
-            <BlueButton className="mt-3 w-full" data-ocid="nav.primary_button">
+            <BlueButton
+              href={BOOKING_URL}
+              className="mt-3 w-full"
+              data-ocid="nav.primary_button"
+            >
               Book a Free Call
             </BlueButton>
           </div>
@@ -281,14 +293,15 @@ export default function App() {
             <Eyebrow>Creator Monetization Agency</Eyebrow>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.1] tracking-normal text-foreground mb-6 font-display">
               We Help Creators Land{" "}
-              <span className="text-gold">High-Paying Sponsorships</span> —
+              <span className="text-gold">High-Paying Sponsorships</span> --
               Consistently
             </h1>
             <p className="text-base text-muted-foreground mb-8 max-w-md leading-relaxed font-light">
-              We handle outreach, brand deals, and negotiations — so you can
+              We handle outreach, brand deals, and negotiations -- so you can
               focus on creating content.
             </p>
             <BlueButton
+              href={BOOKING_URL}
               className="text-base px-8 py-4"
               data-ocid="hero.primary_button"
             >
@@ -296,7 +309,7 @@ export default function App() {
             </BlueButton>
           </motion.div>
 
-          {/* Right — Image + Stats card */}
+          {/* Right -- Image + Stats card */}
           <motion.div
             {...fadeUp(0.2)}
             className="flex justify-center md:justify-end relative"
@@ -362,7 +375,7 @@ export default function App() {
             <Eyebrow>The Problem</Eyebrow>
             <SectionTitle>Still Posting Without Sponsors?</SectionTitle>
             <p className="text-muted-foreground mt-4 max-w-xl mx-auto font-light">
-              You're doing everything right — but the monetization isn't
+              You're doing everything right -- but the monetization isn't
               following. Here's why.
             </p>
           </motion.div>
@@ -483,7 +496,7 @@ export default function App() {
           {/* Metric chips */}
           <motion.div
             {...fadeUp(0.1)}
-            className="flex flex-wrap justify-center gap-4 mb-12"
+            className="flex flex-wrap justify-center gap-4"
           >
             {METRICS.map(({ label, icon: Icon }) => (
               <div
@@ -497,29 +510,6 @@ export default function App() {
                 </span>
               </div>
             ))}
-          </motion.div>
-
-          {/* Screenshot placeholder */}
-          <motion.div
-            {...fadeUp(0.2)}
-            className="rounded-2xl border-2 border-dashed border-border p-12 text-center"
-            style={{ background: "oklch(0.16 0.022 255)" }}
-            data-ocid="results.panel"
-          >
-            <Image className="w-10 h-10 text-muted-foreground/40 mx-auto mb-4" />
-            <p className="text-base font-semibold text-foreground mb-2 font-display">
-              Add Your Screenshots Here
-            </p>
-            <p className="text-sm text-muted-foreground max-w-sm mx-auto font-light">
-              This is what closes deals — upload proof screenshots, client
-              testimonials, and real revenue breakdowns to maximize conversions.
-            </p>
-            <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gold/30 bg-gold/5">
-              <Zap className="w-3.5 h-3.5 text-gold" />
-              <span className="text-xs text-gold font-medium">
-                Upload proof screenshots to maximize conversions
-              </span>
-            </div>
           </motion.div>
         </div>
       </section>
@@ -595,7 +585,7 @@ export default function App() {
                 Performance Commission
               </h3>
               <p className="text-muted-foreground text-sm mb-8 font-light">
-                Aligned incentives — we win when you win.
+                Aligned incentives -- we win when you win.
               </p>
 
               <div className="space-y-4 mb-8 text-left">
@@ -616,6 +606,7 @@ export default function App() {
               </div>
 
               <BlueButton
+                href={BOOKING_URL}
                 className="w-full justify-center text-sm px-8 py-4"
                 data-ocid="pricing.primary_button"
               >
@@ -657,6 +648,7 @@ export default function App() {
               without lifting a finger on the business side.
             </p>
             <BlueButton
+              href={BOOKING_URL}
               className="text-base px-10 py-4"
               data-ocid="cta.primary_button"
             >
