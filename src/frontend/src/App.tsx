@@ -186,9 +186,11 @@ export default function App() {
             className="flex items-center gap-3"
             data-ocid="nav.link"
           >
-            <div className="w-9 h-9 rounded-full bg-gold flex items-center justify-center shadow-gold">
-              <Mic2 className="w-5 h-5 text-white" />
-            </div>
+            <img
+              src="/assets/uploads/1-HD-1.png"
+              alt="1PCfirmsponsors logo"
+              className="h-9 w-9 object-contain"
+            />
             <span className="text-sm font-bold tracking-wide text-foreground font-display">
               1PCfirmsponsors
             </span>
@@ -664,9 +666,11 @@ export default function App() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             {/* Logo */}
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gold flex items-center justify-center">
-                <Mic2 className="w-4 h-4 text-white" />
-              </div>
+              <img
+                src="/assets/uploads/1-HD-1.png"
+                alt="1PCfirmsponsors logo"
+                className="h-8 w-8 object-contain"
+              />
               <span className="text-sm font-bold tracking-wide text-foreground font-display">
                 1PCfirmsponsors
               </span>
