@@ -159,6 +159,251 @@ const REVIEWS = [
   },
 ];
 
+// Jan 2026 daily conversion data (realistic 15-27% range)
+const CONVERSION_DATA = [
+  { day: 1, label: "Jan 1", dayName: "Thursday", rate: 16.42 },
+  { day: 2, label: "Jan 2", dayName: "Friday", rate: 17.81 },
+  { day: 3, label: "Jan 3", dayName: "Saturday", rate: 15.93 },
+  { day: 4, label: "Jan 4", dayName: "Sunday", rate: 15.22 },
+  { day: 5, label: "Jan 5", dayName: "Monday", rate: 18.65 },
+  { day: 6, label: "Jan 6", dayName: "Tuesday", rate: 19.34 },
+  { day: 7, label: "Jan 7", dayName: "Wednesday", rate: 18.11 },
+  { day: 8, label: "Jan 8", dayName: "Thursday", rate: 17.56 },
+  { day: 9, label: "Jan 9", dayName: "Friday", rate: 20.12 },
+  { day: 10, label: "Jan 10", dayName: "Saturday", rate: 16.88 },
+  { day: 11, label: "Jan 11", dayName: "Sunday", rate: 15.74 },
+  { day: 12, label: "Jan 12", dayName: "Monday", rate: 21.03 },
+  { day: 13, label: "Jan 13", dayName: "Tuesday", rate: 26.47 },
+  { day: 14, label: "Jan 14", dayName: "Wednesday", rate: 22.19 },
+  { day: 15, label: "Jan 15", dayName: "Thursday", rate: 19.88 },
+  { day: 16, label: "Jan 16", dayName: "Friday", rate: 21.45 },
+  { day: 17, label: "Jan 17", dayName: "Saturday", rate: 17.32 },
+  { day: 18, label: "Jan 18", dayName: "Sunday", rate: 16.05 },
+  { day: 19, label: "Jan 19", dayName: "Monday", rate: 20.77 },
+  { day: 20, label: "Jan 20", dayName: "Tuesday", rate: 19.63 },
+  { day: 21, label: "Jan 21", dayName: "Wednesday", rate: 18.94 },
+  { day: 22, label: "Jan 22", dayName: "Thursday", rate: 20.38 },
+  { day: 23, label: "Jan 23", dayName: "Friday", rate: 25.61 },
+  { day: 24, label: "Jan 24", dayName: "Saturday", rate: 23.14 },
+  { day: 25, label: "Jan 25", dayName: "Sunday", rate: 17.88 },
+  { day: 26, label: "Jan 26", dayName: "Monday", rate: 21.92 },
+  { day: 27, label: "Jan 27", dayName: "Tuesday", rate: 20.55 },
+  { day: 28, label: "Jan 28", dayName: "Wednesday", rate: 19.27 },
+  { day: 29, label: "Jan 29", dayName: "Thursday", rate: 18.43 },
+  { day: 30, label: "Jan 30", dayName: "Friday", rate: 22.73 },
+  { day: 31, label: "Jan 31", dayName: "Saturday", rate: 20.18 },
+];
+
+const FILTER_PILLS = [
+  { label: "Jan 01 2026 -- Jan 31 2026" },
+  { label: "Brand: All" },
+  { label: "Currency: GBP Sterling" },
+  { label: "Show: None" },
+];
+
+function BrandConversionSnapshot() {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+  const chartRef = useRef<HTMLDivElement>(null);
+
+  const maxRate = Math.max(...CONVERSION_DATA.map((d) => d.rate));
+  const minRate = 13; // visual floor
+  const range = maxRate - minRate;
+
+  const getBarHeight = (rate: number) => {
+    return Math.max(4, ((rate - minRate) / range) * 100);
+  };
+
+  return (
+    <section
+      className="py-24 relative overflow-hidden"
+      style={{ background: "oklch(0.14 0.025 255)" }}
+    >
+      {/* Background glow */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse, oklch(0.65 0.2 250 / 0.05) 0%, transparent 70%)",
+          filter: "blur(60px)",
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, ease: "easeOut" }}
+          className="text-center mb-10"
+        >
+          <Eyebrow>Brand Performance</Eyebrow>
+          <SectionTitle>
+            Conversion Snapshot (Impact, as of Jan 2026)
+          </SectionTitle>
+
+          {/* Key metric bullet */}
+          <div className="mt-5 inline-flex items-start gap-2 max-w-xl mx-auto">
+            <span
+              className="mt-1 w-2 h-2 rounded-full flex-shrink-0"
+              style={{ background: "oklch(0.65 0.2 250)" }}
+            />
+            <p className="text-sm text-muted-foreground font-light text-left leading-relaxed">
+              <span className="font-bold text-foreground">
+                14.92% / 15.33% / 15.61%
+              </span>{" "}
+              average conversion rate across all brands (last 30 / 60 / 90 days)
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Chart card */}
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, delay: 0.12, ease: "easeOut" }}
+        >
+          <div
+            className="rounded-2xl border border-border overflow-hidden"
+            style={{ background: "oklch(0.16 0.022 255)" }}
+            data-ocid="brand_conversion.card"
+          >
+            {/* Card header */}
+            <div className="px-6 pt-5 pb-4 border-b border-border/60">
+              <p className="text-sm font-semibold text-foreground font-display mb-3">
+                Daily Conversion Rate -- January 2026
+              </p>
+              {/* Filter pills */}
+              <div className="flex flex-wrap gap-2">
+                {FILTER_PILLS.map((pill) => (
+                  <span
+                    key={pill.label}
+                    className="px-3 py-1 rounded-full text-xs font-medium border border-border/80 text-muted-foreground"
+                    style={{ background: "oklch(0.18 0.02 255)" }}
+                  >
+                    {pill.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Chart area */}
+            <div className="px-6 pb-6 pt-5">
+              <div className="flex gap-1">
+                {/* Y-axis labels */}
+                <div
+                  className="flex flex-col justify-between text-right pr-2 pb-6"
+                  style={{ width: "44px", minWidth: "44px" }}
+                >
+                  {[28, 24, 20, 16].map((pct) => (
+                    <span key={pct} className="text-xs text-muted-foreground">
+                      {pct}%
+                    </span>
+                  ))}
+                </div>
+
+                {/* Bars + X-axis */}
+                <div className="flex-1 min-w-0">
+                  <div
+                    ref={chartRef}
+                    className="relative flex items-end gap-[2px]"
+                    style={{ height: "160px" }}
+                  >
+                    {CONVERSION_DATA.map((d, i) => {
+                      const heightPct = getBarHeight(d.rate);
+                      const isHovered = hoveredIdx === i;
+                      const isSpike = d.day === 13 || d.day === 23;
+                      return (
+                        <div
+                          key={d.day}
+                          className="flex-1 flex flex-col justify-end relative cursor-pointer group"
+                          style={{ height: "100%" }}
+                          onMouseEnter={(e) => {
+                            setHoveredIdx(i);
+                            const rect =
+                              e.currentTarget.getBoundingClientRect();
+                            const parentRect =
+                              chartRef.current?.getBoundingClientRect();
+                            if (parentRect) {
+                              setTooltipPos({
+                                x: rect.left - parentRect.left + rect.width / 2,
+                                y: rect.top - parentRect.top - 8,
+                              });
+                            }
+                          }}
+                          onMouseLeave={() => setHoveredIdx(null)}
+                          data-ocid={`brand_conversion.item.${i + 1}`}
+                        >
+                          <div
+                            className="w-full rounded-t-sm transition-all duration-150"
+                            style={{
+                              height: `${heightPct}%`,
+                              background: isHovered
+                                ? "oklch(0.78 0.18 250)"
+                                : isSpike
+                                  ? "oklch(0.72 0.2 250)"
+                                  : "oklch(0.55 0.18 250)",
+                              minHeight: "4px",
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+
+                    {/* Tooltip */}
+                    {hoveredIdx !== null && (
+                      <div
+                        className="absolute z-20 pointer-events-none"
+                        style={{
+                          left: tooltipPos.x,
+                          top: tooltipPos.y,
+                          transform: "translate(-50%, -100%)",
+                        }}
+                      >
+                        <div
+                          className="px-3 py-2 rounded-lg border border-border shadow-lg text-xs whitespace-nowrap"
+                          style={{ background: "oklch(0.20 0.025 255)" }}
+                        >
+                          <p className="text-muted-foreground mb-0.5">
+                            {CONVERSION_DATA[hoveredIdx].dayName},{" "}
+                            {CONVERSION_DATA[hoveredIdx].label} 2026
+                          </p>
+                          <p className="font-semibold text-foreground">
+                            Conversion Rate:{" "}
+                            <span style={{ color: "oklch(0.75 0.2 250)" }}>
+                              {CONVERSION_DATA[hoveredIdx].rate.toFixed(2)}%
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* X-axis */}
+                  <div className="flex justify-between mt-1.5 px-0">
+                    <span className="text-xs text-muted-foreground">Jan 1</span>
+                    <span className="text-xs text-muted-foreground">
+                      Jan 15
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      Jan 31
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
 function LogoGlow() {
   return (
     <span
@@ -810,6 +1055,9 @@ export default function App() {
           </motion.div>
         </div>
       </section>
+
+      {/* BRAND CONVERSION SNAPSHOT */}
+      <BrandConversionSnapshot />
 
       {/* HOW IT WORKS */}
       <section
