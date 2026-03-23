@@ -61,3 +61,19 @@
     font-family: "Outfit", sans-serif;
   }
 }
+
+@keyframes logo-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(1.1);
+  }
+}
+
+.logo-glow {
+  animation: logo-glow-pulse 4s ease-in-out infinite;
+}

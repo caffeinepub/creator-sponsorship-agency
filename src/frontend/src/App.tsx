@@ -2,19 +2,23 @@ import {
   AlertCircle,
   BadgeCheck,
   CheckCircle,
+  ChevronLeft,
+  ChevronRight,
   DollarSign,
   Handshake,
   Menu,
   Mic2,
+  Quote,
   Search,
+  Star,
   TrendingUp,
   Users,
   Wallet,
   X,
   Zap,
 } from "lucide-react";
-import { motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
 const BOOKING_URL = "https://cal.com/darpan-olymp-cal/15min";
 
@@ -107,6 +111,73 @@ const STEPS = [
   },
 ];
 
+const REVIEWS = [
+  {
+    name: "James K",
+    role: "YouTube Creator",
+    meta: "420K subscribers",
+    text: "They landed me a $4,500 deal within 3 weeks. Zero effort on my end -- they handled everything from the first email to signing the contract.",
+    rating: 5,
+    initials: "JK",
+    color: "oklch(0.55 0.18 250)",
+  },
+  {
+    name: "Sofia R",
+    role: "Tech Content Creator",
+    meta: "Multi-platform",
+    text: "I had no idea how to approach brands. These guys sent proposals, negotiated, and closed two deals in month one. Genuinely life-changing for my channel.",
+    rating: 5,
+    initials: "SR",
+    color: "oklch(0.60 0.16 210)",
+  },
+  {
+    name: "Marcus T",
+    role: "Lifestyle Creator",
+    meta: "180K subscribers",
+    text: "The process was smooth from start to finish. They matched me with brands my audience actually cares about. My first deal came in at $2,800.",
+    rating: 5,
+    initials: "MT",
+    color: "oklch(0.58 0.17 270)",
+  },
+  {
+    name: "Lena W",
+    role: "Finance Creator",
+    meta: "Growing channel",
+    text: "Went from 0 sponsors to 3 active brand deals in 60 days. The team is professional, fast, and genuinely invested in your growth.",
+    rating: 5,
+    initials: "LW",
+    color: "oklch(0.55 0.15 230)",
+  },
+  {
+    name: "Ryan D",
+    role: "Gaming Creator",
+    meta: "95K subscribers",
+    text: "Tried reaching out to brands myself for months with zero replies. 1PC closed my first deal in under 2 weeks. Wish I'd found them sooner.",
+    rating: 5,
+    initials: "RD",
+    color: "oklch(0.60 0.18 265)",
+  },
+];
+
+function LogoGlow() {
+  return (
+    <span
+      aria-hidden="true"
+      className="logo-glow"
+      style={{
+        position: "absolute",
+        inset: "-8px",
+        borderRadius: "50%",
+        background:
+          "radial-gradient(circle, oklch(0.65 0.2 250 / 0.7) 0%, oklch(0.65 0.2 250 / 0.2) 50%, transparent 75%)",
+        filter: "blur(8px)",
+        pointerEvents: "none",
+        zIndex: 0,
+      }}
+    />
+  );
+}
+
 function BlueButton({
   children,
   className = "",
@@ -144,6 +215,224 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
     <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-normal leading-tight font-display">
       {children}
     </h2>
+  );
+}
+
+function StarRating({ count }: { count: number }) {
+  return (
+    <div className="flex gap-0.5">
+      {[1, 2, 3, 4, 5].slice(0, count).map((n) => (
+        <Star key={n} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+      ))}
+    </div>
+  );
+}
+
+function ReviewsSection() {
+  const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const touchStartX = useRef<number | null>(null);
+  const [perPage, setPerPage] = useState(3);
+
+  useEffect(() => {
+    const update = () => setPerPage(window.innerWidth < 768 ? 1 : 3);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  const total = REVIEWS.length;
+  const maxIndex = total - perPage;
+
+  const prev = () => {
+    if (current === 0) return;
+    setDirection(-1);
+    setCurrent((c) => Math.max(0, c - 1));
+  };
+
+  const next = () => {
+    if (current >= maxIndex) return;
+    setDirection(1);
+    setCurrent((c) => Math.min(maxIndex, c + 1));
+  };
+
+  const visible = REVIEWS.slice(current, current + perPage);
+
+  return (
+    <section
+      className="py-24 relative overflow-hidden"
+      style={{ background: "oklch(0.14 0.025 255)" }}
+    >
+      {/* Subtle background glow */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse, oklch(0.65 0.2 250 / 0.06) 0%, transparent 70%)",
+          filter: "blur(40px)",
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, ease: "easeOut" }}
+          className="text-center mb-12"
+        >
+          <Eyebrow>Creator Stories</Eyebrow>
+          <SectionTitle>What Our Creators Say</SectionTitle>
+
+          {/* Aggregate rating */}
+          <div className="flex items-center justify-center gap-2 mt-5">
+            <div className="flex gap-0.5">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <Star
+                  key={n}
+                  className="w-5 h-5 fill-amber-400 text-amber-400"
+                />
+              ))}
+            </div>
+            <span className="text-foreground font-bold text-lg font-display">
+              4.9
+            </span>
+            <span className="text-muted-foreground text-sm font-light">
+              from 200+ creators
+            </span>
+          </div>
+        </motion.div>
+
+        {/* Carousel */}
+        <div className="relative">
+          <div className="overflow-hidden">
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.div
+                key={`${current}-${perPage}`}
+                initial={{ opacity: 0, x: direction * 60 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: direction * -60 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                className="grid gap-5"
+                style={{
+                  gridTemplateColumns: `repeat(${perPage}, minmax(0, 1fr))`,
+                }}
+                onTouchStart={(e) => {
+                  touchStartX.current = e.touches[0].clientX;
+                }}
+                onTouchEnd={(e) => {
+                  if (touchStartX.current === null) return;
+                  const delta =
+                    touchStartX.current - e.changedTouches[0].clientX;
+                  if (delta > 50) next();
+                  else if (delta < -50) prev();
+                  touchStartX.current = null;
+                }}
+              >
+                {visible.map((review, i) => (
+                  <motion.div
+                    key={review.name}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: i * 0.07 }}
+                    className="rounded-2xl border border-border p-6 flex flex-col gap-4 relative group hover:border-gold/30 transition-colors"
+                    style={{ background: "oklch(0.16 0.022 255)" }}
+                    data-ocid={`reviews.item.${current + i + 1}`}
+                  >
+                    {/* Quote icon */}
+                    <Quote
+                      className="w-6 h-6 text-gold/30 absolute top-5 right-5"
+                      aria-hidden="true"
+                    />
+
+                    {/* Stars */}
+                    <StarRating count={review.rating} />
+
+                    {/* Review text */}
+                    <p className="text-sm text-muted-foreground leading-relaxed font-light flex-1">
+                      &ldquo;{review.text}&rdquo;
+                    </p>
+
+                    {/* Reviewer */}
+                    <div className="flex items-center gap-3 pt-2 border-t border-border/60">
+                      <div
+                        className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                        style={{ background: review.color }}
+                      >
+                        {review.initials}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-foreground font-display">
+                          {review.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {review.role}{" "}
+                          <span className="text-gold/70">· {review.meta}</span>
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Navigation */}
+          <div className="flex items-center justify-center gap-4 mt-8">
+            <button
+              type="button"
+              onClick={prev}
+              disabled={current === 0}
+              className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-gold/40 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              style={{ background: "oklch(0.16 0.022 255)" }}
+              data-ocid="reviews.pagination_prev"
+              aria-label="Previous reviews"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+
+            {/* Dots */}
+            <div className="flex gap-1.5">
+              {Array.from({ length: maxIndex + 1 }, (_, idx) => idx).map(
+                (i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => {
+                      setDirection(i > current ? 1 : -1);
+                      setCurrent(i);
+                    }}
+                    className="w-1.5 rounded-full transition-all duration-300"
+                    style={{
+                      height: "6px",
+                      background:
+                        i === current
+                          ? "oklch(0.65 0.2 250)"
+                          : "oklch(0.35 0.02 255)",
+                      width: i === current ? "20px" : "6px",
+                    }}
+                    aria-label={`Go to slide ${i + 1}`}
+                  />
+                ),
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={next}
+              disabled={current >= maxIndex}
+              className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-gold/40 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              style={{ background: "oklch(0.16 0.022 255)" }}
+              data-ocid="reviews.pagination_next"
+              aria-label="Next reviews"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -186,11 +475,17 @@ export default function App() {
             className="flex items-center gap-3"
             data-ocid="nav.link"
           >
-            <img
-              src="/assets/uploads/1-HD-1.png"
-              alt="1PCfirmsponsors logo"
-              className="h-9 w-9 object-contain"
-            />
+            <span
+              className="relative flex items-center justify-center"
+              style={{ width: "36px", height: "36px" }}
+            >
+              <LogoGlow />
+              <img
+                src="/assets/uploads/1-HD-1.png"
+                alt="1PCfirmsponsors logo"
+                className="h-9 w-9 object-contain relative z-10"
+              />
+            </span>
             <span className="text-sm font-bold tracking-wide text-foreground font-display">
               1PCfirmsponsors
             </span>
@@ -622,6 +917,9 @@ export default function App() {
         </div>
       </section>
 
+      {/* REVIEWS */}
+      <ReviewsSection />
+
       {/* FINAL CTA */}
       <section
         className="py-28 text-center relative overflow-hidden"
@@ -666,11 +964,17 @@ export default function App() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             {/* Logo */}
             <div className="flex items-center gap-3">
-              <img
-                src="/assets/uploads/1-HD-1.png"
-                alt="1PCfirmsponsors logo"
-                className="h-8 w-8 object-contain"
-              />
+              <span
+                className="relative flex items-center justify-center"
+                style={{ width: "32px", height: "32px" }}
+              >
+                <LogoGlow />
+                <img
+                  src="/assets/uploads/1-HD-1.png"
+                  alt="1PCfirmsponsors logo"
+                  className="h-8 w-8 object-contain relative z-10"
+                />
+              </span>
               <span className="text-sm font-bold tracking-wide text-foreground font-display">
                 1PCfirmsponsors
               </span>
